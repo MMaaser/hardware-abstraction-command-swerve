@@ -7,9 +7,10 @@ bin/
 *.ear
 *.iml
 
-#ignore error logs
+#ignore logs
 hs_err_pid*
 *.log
+logs/
 
 #ignore vscode settings
 
