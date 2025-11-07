@@ -33,3 +33,8 @@
 5. run the sim
 - use your xbox controller, WASD controls if you're using keyboard 0, or whatever other controller you've selected to move the robot while the robot simulation window is your selected window
 - If movement correlation is unclear, hit the plus sign and select swerve. This screen will show you which direction (robot oriented) the bot is moving in. This codebase is by default bot oriented (working on that).
+
+# Things I've picked up:
+- git has a limit to file and repo size
+- for some reason, it factors branch history into that
+- gitignore is a good way to leave out compiled folders because they're practically useless to anyone besides you and the clog up your repo
