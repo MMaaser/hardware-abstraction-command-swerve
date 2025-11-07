@@ -1,116 +1,35 @@
-# CTRE Generated Swerve Code with Maple-Sim
+# What this does
+- simulates a command swerve drive like a video game
+- will simulate an additional subsystem soon
+- hopefully simulates vision soon
 
-This is a modified version of the [CTRE Generated Swerve Code](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/index.html), enhanced with **Maple-Sim** for better simulation capabilities.
+# How it does it
+- java
+- generated project through pheonix tuner and maplesim
+- uses advantagescope's 3d field and built in kitbot assets to simulate robot drive
 
-This integration enables a realistic physics-based simulation using Maple-Sim with CTRE Swerve. You can fine-tune autonomous modes, optimize subsystems, and test advanced interactions in a simulated environment.
-
-## Using with New Projects
-
-To integrate **Maple-Sim** with new CTRE swerve projects:
-1. Generate the `TunerConstants.java` file using Phoenix Tuner X.
-2. Place the generated file in your project at `generated/TunerConstants.java`.
-3. Deploy the code to your robot!
-
-## Using with Existing Projects
-
-For existing CTRE swerve projects, follow these steps to integrate the simulation:
-
----
-
-### Prerequisites
-Ensure your project was generated using **Phoenix Tuner X `2025.2.0.0+`**.
-
----
-
-### Install Maple-Sim
-Install the latest version of **Maple-Sim**. Refer to the [installation guide](https://shenzhen-robotics-alliance.github.io/maple-sim/installing-maple-sim/) for detailed instructions.
-
----
-
-### Add the Utility Class
-Download [this source file](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/CTRE%20Swerve%20with%20maple-sim/src/main/java/frc/robot/utils/simulation/MapleSimSwerveDrivetrain.java) and place it in the `src/main/java/frc/robot/utils/simulation` directory of your project.
-
----
-
-### Modify the Drive Subsystem Code
-Update your `subsystems/CommandSwerveDrivetrain.java` file as follows:
-
-1. **Change the Simulation Implementation**
-    Replace the existing `startSimThread` method with the code below:
-    ```java
-    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
-    private void startSimThread() {
-        mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
-                Seconds.of(kSimLoopPeriod),
-                // TODO: modify the following constants according to your robot
-                Pounds.of(115), // robot weight
-                Inches.of(30), // bumper length
-                Inches.of(30), // bumper width
-                DCMotor.getKrakenX60(1), // drive motor type
-                DCMotor.getFalcon500(1), // steer motor type
-                1.2, // wheel COF
-                getModuleLocations(),
-                getPigeon2(),
-                getModules(),
-                TunerConstants.FrontLeft,
-                TunerConstants.FrontRight,
-                TunerConstants.BackLeft,
-                TunerConstants.BackRight);
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
-    ```
-
-2. **Regulate the Module Constants**
-    Modify the constructor to regulate the module constants.
-    *Note: This will modify your module constants during simulation to avoid known bugs during, skips if running on a real robot.*
-    ```java
-    /** ... */
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
-            double odometryUpdateFrequency,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(
-                drivetrainConstants,
-                odometryUpdateFrequency,
-                // modules
-                MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        configureAutoBuilder();
-    }
-
-    /** ... */
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
-            double odometryUpdateFrequency,
-            Matrix<N3, N1> odometryStandardDeviation,
-            Matrix<N3, N1> visionStandardDeviation,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(
-                drivetrainConstants,
-                odometryUpdateFrequency,
-                odometryStandardDeviation,
-                visionStandardDeviation,
-                // modules
-                MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        configureAutoBuilder();
-    }
-    ```
-
-3. **Reset the Robot Simulation Pose**
-    Update the resetPose method to sync simulation and real-world poses:
-    ```java
-    @Override
-    public void resetPose(Pose2d pose) {
-        if (this.mapleSimSwerveDrivetrain != null)
-            mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-        Timer.delay(0.05); // Wait for simulation to update
-        super.resetPose(pose);
-    }
-    ```
+# How use simulation
+1. prep advantagescope
+- help -> show assets folder
+- either:
+    - create a folder for your robot's 3d model according to the advantagescope docs
+    - go into the parent directory, then copy the directory autoAssets/Robot_2024KitbotV2 to the userAssets folder
+2. run this code
+- download it and unzip it if neccessary
+- open in in FRC's VScode
+- ctrl+shift+p
+- type and enter "WPILIB: Simulate robot code"
+- select simulation GUI
+3. configure simulation
+- open the new robot simulation window
+- select teleoperated from the list of robot modes in the upper left
+- drag your method of choice to control the robot to joystick 0 (usually a USB-connected xbox controller or keyboard 0 if you don't have a controller)
+4. configure advantagescope
+- go to advantage scope
+- click the plus in the upper right corner, then select 3D field if 3D field is not already in the top bar
+- click on where it says 3D field on the tob bar
+- in the sidebar, click where it says pose to open the dropdown menu
+- click and drag robotPose to the poses section under the field
+5. run the sim
+- use your xbox controller, WASD controls if you're using keyboard 0, or whatever other controller you've selected to move the robot while the robot simulation window is your selected window
+- If movement correlation is unclear, hit the plus sign and select swerve. This screen will show you which direction (robot oriented) the bot is moving in. This codebase is by default bot oriented (working on that).

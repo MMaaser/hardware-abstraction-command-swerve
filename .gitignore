@@ -1,3 +1,17 @@
 #ignore compiled binaries
 build/
 bin/
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+
+#ignore error logs
+hs_err_pid*
+*.log
+
+#ignore vscode settings
+
+#ignore other auto-generated entities
+.gradle/
