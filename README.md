@@ -24,6 +24,10 @@
 - open the new robot simulation window
 - select teleoperated from the list of robot modes in the upper left
 - drag your method of choice to control the robot to joystick 0 (usually a USB-connected xbox controller or keyboard 0 if you don't have a controller)
+- if on keyboard 0, right click it in the system joysticks menu and select edit keyboard 0
+- for Axis 0, set increase to w and decrease to s
+- for Axis 1, set increase to d and decrease to a
+- you can set them to whatever you want technically, but this is standard WASD controls
 4. configure advantagescope
 - go to advantage scope
 - click the plus in the upper right corner, then select 3D field if 3D field is not already in the top bar
